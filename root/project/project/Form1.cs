@@ -15,5 +15,12 @@ namespace project
         {
             InitializeComponent();
         }
+
+        private void buttonCallTestForm_Click(object sender, EventArgs e)
+        {
+            TestForm VictorTestForm = new TestForm();
+
+            VictorTestForm.ShowDialog();  //  не знаю стоит ли к мамке форме привязывать
+        }
     }
 }
