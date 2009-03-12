@@ -14,9 +14,32 @@ namespace project
         Bitmap lBitmapdrawingArea;
         Graphics DrawingArea;
 
+        
+        System.Collections.Generic.List<DrawingRectangle> Groop = new List<DrawingRectangle>(10);
+
+        DrawingRectangle exTank;
+       
+
         public TestForm()
         {
             InitializeComponent();
+            
+
+            DrawingArea = panelDrawingArea.CreateGraphics();
+
+            Point startPoint = new Point(50,panelDrawingArea.Height- 50);
+            exTank = new DrawingRectangle(DrawingArea, startPoint, 250, 150);
+            Groop.Add(exTank);
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+            
+            for (int i = 0; i < Groop.Count; i++)
+            {
+                Groop[i].Draw();
+            }
         }
     }
 
@@ -42,12 +65,41 @@ namespace project
         }
 
         private Rectangle body;
-/* незавершенный конструктор
+
+        private Pen pen; // контур
+        private Brush brush = Brushes.Blue; // для заливки
+      
         public DrawingRectangle(Graphics place, Point pointWhere ,int xSize, int ySize)
         {
+            pen = new Pen(Brushes.Blue) ;
             drawPlace = place;
+
+            startPoint.X = pointWhere.X;
+            startPoint.Y = pointWhere.Y - ySize;
+            
+            //поскольку для инициализации берется левая верхняя , немного пошаманим
+            body = new Rectangle(pointWhere.X, pointWhere.Y - ySize, xSize, ySize);
+
         }
-        */
+
+        public void Draw()
+        {
+            drawPlace.DrawRectangle(new Pen(Brushes.Blue), body);
+            drawPlace.FillRectangle(brush, body);
+        }
+
+        /// <summary>
+        /// Запускает движение прямоугольника
+        /// </summary>
+        /// <param name="xStart">начальная координата x</param>
+        /// <param name="yStart">начальная координата y</param>
+        /// <param name="xEnd">конечная координата x</param>
+        /// <param name="yEnd">конечная координата y</param>
+        public void startMoving(int xStart, int yStart, int xEnd, int yEnd)
+        {
+            
+        }
+
     }
     /// <summary>
     /// Инкапсулирует набор рисуемых прямоугольников
@@ -66,7 +118,7 @@ namespace project
 
         private Brush brush = Brushes.Blue; // для заливки
         private Brush textcolor = Brushes.Red;
-        //private Rectangle body = new Rectangle(0, 0, 2 * Lsize, Lsize);
+        private Rectangle body = new Rectangle(0, 0, 2 * Lsize, Lsize);
         
 
         public DrawingFigure(int xPos, int yPos, Graphics WhereDraw)
@@ -109,8 +161,9 @@ namespace project
         }
     }
 
-    public class Apc : DrawingFigure
+   /* public class Apc : DrawingFigure
     {
         
     }
+    * */
 }
