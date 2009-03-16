@@ -14,8 +14,7 @@ namespace project
         Bitmap lBitmapdrawingArea;
         Graphics DrawingArea;
 
-
-        System.Collections.Generic.List<DrawingRectangle> Groop = new List<DrawingRectangle>(10);
+        System.Collections.Generic.List<DrawingRectangle> groop = new List<DrawingRectangle>(10);
 
         DrawingRectangle exTank;
 
@@ -26,30 +25,39 @@ namespace project
 
             DrawingArea = panelDrawingArea.CreateGraphics();
 
-            Point startPoint = new Point(50,  panelDrawingArea.Height - 50);
-            exTank = new DrawingRectangle(DrawingArea, startPoint, 25, 15);
-            Groop.Add(exTank);
+            Point startPoint = new Point(50,50);
+            exTank = new DrawingRectangle( DrawingArea,panelDrawingArea.Size, startPoint, 25, 15);
+            groop.Add(exTank);
+
+
+
+            lBitmapdrawingArea = new Bitmap(
+                this.panelDrawingArea.Width,
+                this.panelDrawingArea.Height,
+                System.Drawing.Imaging.PixelFormat.Format24bppRgb);  
         }
 
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
 
-            for (int i = 0; i < Groop.Count; i++)
+            for (int i = 0; i < groop.Count; i++)
             {
-                Groop[i].Draw();
+                groop[i].Draw();
             }
         }
 
         private void buttonTry_Click(object sender, EventArgs e)
         {
-            DrawingRectangle D =  Groop[0];
-            D.startMoving(D.BodyPoint.X,D.BodyPoint.Y,75,75);
+            DrawingRectangle D =  groop[0];
+            groop[0].startMoving(groop[0].posX, groop[0].posY, 75, 75, lBitmapdrawingArea, panelDrawingArea,textBox1);
 
-            PaintEventArgs ee = new PaintEventArgs(DrawingArea,new Rectangle(0,0,panelDrawingArea.Width,panelDrawingArea.Height));
 
-            OnPaint(ee);
-            MessageBox.Show("Complite");
+            textBox1.Text += groop[0].posX.ToString() + " " + groop[0].posY.ToString();
+            //PaintEventArgs ee = new PaintEventArgs(DrawingArea,new Rectangle(0,0,panelDrawingArea.Width,panelDrawingArea.Height));
+
+            //OnPaint(ee);
+            //MessageBox.Show("Complite");
         }
     }
 
@@ -60,15 +68,33 @@ namespace project
     {
         private string name; // имя обьекта
         private Point bodyPoint;//точка местоположения - левая нижняя
+        private Size maxPoint;
+       
 
-        public Point BodyPoint
+        public int posX
         {
             get
             {
-                return bodyPoint;
+                return bodyPoint.X;
+            }
+            set
+            {
+                bodyPoint.X = (value);
+            }
+                
+        }
+        public int posY
+        {
+            get
+            {
+                return (maxPoint.Height - bodyPoint.Y);
+            }
+            set
+            {
+                bodyPoint.Y = maxPoint.Height- (value);
             }
         }
-
+             
         private Graphics drawPlace;  //место где рисуется
         public string Name
         {
@@ -82,30 +108,35 @@ namespace project
             }
         }
 
-        private Rectangle body;
+        private Rectangle bodyRectangle;
 
         private Pen pen; // контур
         private Brush brush = Brushes.Blue; // для заливки
 
-        public DrawingRectangle(Graphics place, Point pointWhere, int xSize, int ySize)
+        public DrawingRectangle(Graphics place,Size sizeOfPanel , Point pointWhere, int xSize, int ySize)
         {
             pen = new Pen(Brushes.Blue);
             drawPlace = place;
+            maxPoint = sizeOfPanel;
 
-            bodyPoint.X = pointWhere.X;
-            bodyPoint.Y = (pointWhere.Y - ySize);
-
-            //поскольку для инициализации берется левая верхняя , немного пошаманим
-            body = new Rectangle(pointWhere.X, pointWhere.Y - ySize, xSize, ySize);
+            posX = pointWhere.X;
+            posY = pointWhere.Y;
+                       
+            bodyRectangle = new Rectangle(posX, bodyPoint.Y -  ySize, xSize, ySize);
 
         }
 
         public void Draw()
         {
-            drawPlace.DrawRectangle(new Pen(Brushes.Blue), body);
-            drawPlace.FillRectangle(brush, body);
+            drawPlace.DrawRectangle(new Pen(Brushes.Blue), bodyRectangle);
+            drawPlace.FillRectangle(brush, bodyRectangle);
         }
 
+        public void Draw(Graphics Exsacly)
+        {
+            Exsacly.DrawRectangle(new Pen(Brushes.Blue), bodyRectangle);
+            Exsacly.FillRectangle(brush, bodyRectangle);
+        }
         /// <summary>
         /// Запускает движение прямоугольника
         /// </summary>
@@ -113,46 +144,75 @@ namespace project
         /// <param name="yStart">начальная координата y</param>
         /// <param name="xEnd">конечная координата x</param>
         /// <param name="yEnd">конечная координата y</param>
-        public void startMoving(int xStart, int yStart, int xEnd, int yEnd)
+        /// <param name="param">Bitmap incapsulated in form</param>
+        /// <param name="panelWhereShow">та на которой и будем рисовать</param>
+        public void startMoving(int xStart, int yStart, int xEnd, int yEnd, Bitmap param, Panel panelWhereShow,TextBox calledFromForm)
         {
-#warning добавить смену экранов?
-            //int xStart, yStart, xEnd, yEnd;
-            {
+            
                 int dx, dy, s;
+
+                string buffer = "";
+
+                buffer += xStart.ToString() + " " + yStart.ToString()+" " + "\r\n" ;  
+
 
                 /* Упорядочивание координат и вычисление приращений */
                 if (xStart > xEnd)
                 {
-                    s = xStart; xStart = xEnd; xEnd = s;
-                    s = yStart; yStart = yEnd; yEnd = s;
+                    s = xStart;
+                    xStart = xEnd;
+                    xEnd = s;
+
+                    s = yStart;
+                    yStart = yEnd;
+                    yEnd = s;
                 }
-                dx = xEnd - xStart; dy = yEnd - yStart;
+                dx = xEnd - xStart;
+                dy = yEnd - yStart;
 
                 /* Занесение начальной точки вектора */
                 //   PutPixLn (xn, yn, Pix_C);
-                bodyPoint.X = xStart;
-                bodyPoint.Y = yStart;
+                posX = xStart;
+                posY = yStart;
 
                 Draw();
 
                 if (dx == 0 && dy == 0) return;
                 /* Вычисление количества позиций по X и Y */
-                dx = dx + 1; dy = dy + 1;
+                dx = dx + 1; 
+                dy = dy + 1;
 
                 /* Собственно генерация вектора */
                 if (dy == dx)
-                {                 /* Наклон == 45 градусов */
+                {                
+                    /* Наклон == 45 градусов */
+                   // MessageBox.Show("Наклон == 45 градусов");
                     while (xStart < xEnd)
                     {
                         xStart = xStart + 1;
-                        //PutPixLn (xn, xn, Pix_C);
-                        bodyPoint.X = xStart;
-                        bodyPoint.Y = yStart;
-                        Draw();
+                        yStart = yStart + 1;
+                      
+
+                        Bitmap lBitmap = (Bitmap) param.Clone();
+                        Graphics lGraphics = Graphics.FromImage(lBitmap);
+
+                        posX = xStart;
+                        posY = yStart;
+                        Draw(lGraphics);
+
+                        lGraphics.Dispose();
+
+                        Graphics lGraphicsForm = panelWhereShow.CreateGraphics();
+                        lGraphicsForm.DrawImage(lBitmap, new Point(0, 0));
+                        lGraphicsForm.Dispose();
+
+                        buffer += xStart.ToString() + " " + yStart.ToString() + " " + "\r\n";
+
                     }
                 }
                 else if (dx > dy)
                 {           /* Наклон <  45 градусов */
+                   // MessageBox.Show("Наклон <  45 градусов");
                     s = 0;
                     while (xStart < xEnd)
                     {
@@ -160,34 +220,60 @@ namespace project
                         s = s + dy;
                         if (s >= dx)
                         {
-                            s = s - dx; yStart = yStart + 1;
+                            s = s - dx;
+                            yStart = yStart + 1;
                         }
                         //PutPixLn (xn, yn, Pix_C);
-                        bodyPoint.X = xStart;
-                        bodyPoint.Y = yStart;
-                        Draw();
+                        Bitmap lBitmap = (Bitmap)param.Clone();
+                        Graphics lGraphics = Graphics.FromImage(lBitmap);
+
+                        posX = xStart;
+                        posY = yStart;
+                        Draw(lGraphics);
+
+                        Graphics lGraphicsForm = panelWhereShow.CreateGraphics();
+                        lGraphicsForm.DrawImage(lBitmap, new Point(0, 0));
+                        lGraphicsForm.Dispose();
+
+                        buffer += xStart.ToString() + " " + yStart.ToString() + " " + "\r\n";
                     }
                 }
                 else
                 {                        /* Наклон >  45 градусов */
                     s = 0;
+                   // MessageBox.Show("Наклон <  45 градусов");
                     while (yStart < yEnd)
                     {
                         yStart = yStart + 1;
                         s = s + dx;
                         if (s >= dy)
                         {
-                            s = s - dy; xStart = xStart + 1;
+                            s = s - dy;
+                            xStart = xStart + 1;
                         }
                         //PutPixLn (xn, yn, Pix_C);
-                        bodyPoint.X = xStart;
-                        bodyPoint.Y = yStart;
-                        Draw();
+                        Bitmap lBitmap = (Bitmap)param.Clone();
+                        Graphics lGraphics = Graphics.FromImage(lBitmap);
+
+                        posX = xStart;
+                        posY = yStart;
+                        Draw(lGraphics);
+
+                        Graphics lGraphicsForm = panelWhereShow.CreateGraphics();
+                        lGraphicsForm.DrawImage(lBitmap, new Point(0, 0));
+                        lGraphicsForm.Dispose();
+
+                        buffer += xStart.ToString() + " " + yStart.ToString() + " " + "\r\n";
                     }
                 }
-            }
+
+                calledFromForm.Text = buffer;            
 
         }
+        
+        
+        
+        
         /// <summary>
         /// Инкапсулирует набор рисуемых прямоугольников
         /// </summary>

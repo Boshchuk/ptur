@@ -30,6 +30,7 @@
         {
             this.panelDrawingArea = new System.Windows.Forms.Panel();
             this.buttonTry = new System.Windows.Forms.Button();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // panelDrawingArea
@@ -50,16 +51,27 @@
             this.buttonTry.UseVisualStyleBackColor = true;
             this.buttonTry.Click += new System.EventHandler(this.buttonTry_Click);
             // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(188, 332);
+            this.textBox1.Multiline = true;
+            this.textBox1.Name = "textBox1";
+            this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.textBox1.Size = new System.Drawing.Size(301, 141);
+            this.textBox1.TabIndex = 2;
+            // 
             // TestForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(694, 503);
+            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.buttonTry);
             this.Controls.Add(this.panelDrawingArea);
             this.Name = "TestForm";
             this.Text = "TestForm";
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -67,5 +79,6 @@
 
         private System.Windows.Forms.Panel panelDrawingArea;
         private System.Windows.Forms.Button buttonTry;
+        private System.Windows.Forms.TextBox textBox1;
     }
 }
