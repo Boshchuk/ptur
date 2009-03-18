@@ -290,6 +290,7 @@ namespace project
             ltarget.Add(detal);
         }
     }
+
     public class Tank : Target
     {
         public Tank(Graphics pl): base(pl)
