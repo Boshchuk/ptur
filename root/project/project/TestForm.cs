@@ -46,19 +46,19 @@ namespace project
                 groop[i].Draw();
             }
         }
-
+        
         private void buttonTry_Click(object sender, EventArgs e)
         {
             DrawingRectangle D =  groop[0];
-            groop[0].startMoving(groop[0].posX, groop[0].posY, 75, 75, lBitmapdrawingArea, panelDrawingArea,textBox1);
-
+            groop[0].startMoving(D.posX, D.posY, 75, 75, lBitmapdrawingArea, panelDrawingArea,textBox1);
 
             textBox1.Text += groop[0].posX.ToString() + " " + groop[0].posY.ToString();
-            //PaintEventArgs ee = new PaintEventArgs(DrawingArea,new Rectangle(0,0,panelDrawingArea.Width,panelDrawingArea.Height));
 
-            //OnPaint(ee);
-            //MessageBox.Show("Complite");
+            groop[0].startMoving(D.posX, D.posY, 150, 50, lBitmapdrawingArea, panelDrawingArea, textBox1);
+            textBox1.Text += groop[0].posX.ToString() + " " + groop[0].posY.ToString();
         }
+         
+      
     }
 
     /// <summary>
@@ -69,7 +69,6 @@ namespace project
         private string name; // имя обьекта
         private Point bodyPoint;//точка местоположения - левая нижняя
         private Size maxPoint;
-       
 
         public int posX
         {
@@ -113,6 +112,14 @@ namespace project
         private Pen pen; // контур
         private Brush brush = Brushes.Blue; // для заливки
 
+        /// <summary>
+        /// Создает Рисуемый прямаугольник
+        /// </summary>
+        /// <param name="place">Где</param>
+        /// <param name="sizeOfPanel">размеры панели в которой рисование</param>
+        /// <param name="pointWhere">левая нижняя точка</param>
+        /// <param name="xSize">ширина</param>
+        /// <param name="ySize">высота</param>
         public DrawingRectangle(Graphics place,Size sizeOfPanel , Point pointWhere, int xSize, int ySize)
         {
             pen = new Pen(Brushes.Blue);
@@ -134,6 +141,7 @@ namespace project
 
         public void Draw(Graphics Exsacly)
         {
+            bodyRectangle = new Rectangle(bodyPoint.X, bodyPoint.Y-bodyRectangle.Height, bodyRectangle.Width, bodyRectangle.Height);
             Exsacly.DrawRectangle(new Pen(Brushes.Blue), bodyRectangle);
             Exsacly.FillRectangle(brush, bodyRectangle);
         }
@@ -270,74 +278,51 @@ namespace project
                 calledFromForm.Text = buffer;            
 
         }
-        
-        
-        
-        
-        /// <summary>
-        /// Инкапсулирует набор рисуемых прямоугольников
-        /// </summary>
-        public class DrawingFigure
+    }
+
+    //будем исходить, что мишень представима набором прямаугольников
+    public class Target
+    {
+        protected Graphics where;
+        List<DrawingRectangle> ltarget = null;
+        public int DetalCount
         {
-            /// <summary>
-            /// Начальная точка - левая нижняя
-            /// </summary>
-            private Point Position;  //определить за начальную точку брать 
-            private Graphics DrawPlace;
-
-            const int Lsize = 40;
-
-            private Pen pen = new Pen(Brushes.Blue); // контур
-
-            private Brush brush = Brushes.Blue; // для заливки
-            private Brush textcolor = Brushes.Red;
-            private Rectangle body = new Rectangle(0, 0, 2 * Lsize, Lsize);
-
-
-            public DrawingFigure(int xPos, int yPos, Graphics WhereDraw)
+            get
             {
-                Position.X = xPos;
-                Position.Y = yPos;
-
-                DrawPlace = WhereDraw;
-            }
-
-            public void Draw(int x, int y)
-            {
-                body = new Rectangle(x, y, 2 * Lsize, Lsize);
-                DrawPlace.DrawRectangle(pen, body);
-                DrawPlace.FillRectangle(brush, body);
-
-            }
-            public void Draw()
-            {
-                body = new Rectangle(Position.X, Position.Y, 2 * Lsize + 10, Lsize);
-
-                DrawPlace.DrawRectangle(pen, body);
-                DrawPlace.FillRectangle(brush, body);
-
-            }
-            public void Draw(bool IsMoving)
-            {
-                body = new Rectangle(Position.X, Position.Y, 2 * Lsize + 10, Lsize);
-                if (IsMoving == false)
-                {
-                    DrawPlace.DrawRectangle(pen, body);
-                    DrawPlace.FillRectangle(textcolor, body);
-                }
-                else
-                {
-                    DrawPlace.DrawRectangle(pen, body);
-                    DrawPlace.FillRectangle(brush, body);
-                }
-
+                return ltarget.Capacity;
             }
         }
+        public Target(Graphics place)
+        {
+            ltarget = new List<DrawingRectangle>();
+            where = place;
+        }
+        //отображение фигуры, это отображение фигуры в иерархии
+        private void addDetal(DrawingRectangle detal)
+        {   
+            ltarget.Add(detal);
+        }
+    }
+    public class Tank : Target
+    {
+        public Tank(Graphics pl): base(pl)
+        {
+            
+        } 
+    }
 
-        /* public class Apc : DrawingFigure
-         {
-        
-         }
-         * */
+    public class Apc : Target
+    {
+      /*  public Apc()
+            : base()
+        { 
+        }
+        */
+        public Apc(Graphics place,int width,int heihgt,int trackHeihgt,Size sizeOfPanel,Point pointWhere)
+            : base(place)
+        {
+          //  Point pos = new Point(pointWhere.X,
+          //  DrawingRectangle corpus = new DrawingRectangle(this.where, sizeOfPanel, pos, width, heihgt - trackHeihgt);
+        }
     }
 }

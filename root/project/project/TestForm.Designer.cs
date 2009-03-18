@@ -35,10 +35,11 @@
             // 
             // panelDrawingArea
             // 
+            this.panelDrawingArea.BackColor = System.Drawing.SystemColors.ControlText;
             this.panelDrawingArea.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panelDrawingArea.Location = new System.Drawing.Point(12, 12);
             this.panelDrawingArea.Name = "panelDrawingArea";
-            this.panelDrawingArea.Size = new System.Drawing.Size(656, 296);
+            this.panelDrawingArea.Size = new System.Drawing.Size(656, 314);
             this.panelDrawingArea.TabIndex = 0;
             // 
             // buttonTry
