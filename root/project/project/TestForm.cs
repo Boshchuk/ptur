@@ -29,8 +29,6 @@ namespace project
             exTank = new DrawingRectangle( DrawingArea,panelDrawingArea.Size, startPoint, 25, 15);
             groop.Add(exTank);
 
-
-
             lBitmapdrawingArea = new Bitmap(
                 this.panelDrawingArea.Width,
                 this.panelDrawingArea.Height,
@@ -40,7 +38,6 @@ namespace project
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
-
             for (int i = 0; i < groop.Count; i++)
             {
                 groop[i].Draw();
@@ -56,9 +53,7 @@ namespace project
 
             groop[0].startMoving(D.posX, D.posY, 150, 50, lBitmapdrawingArea, panelDrawingArea, textBox1);
             textBox1.Text += groop[0].posX.ToString() + " " + groop[0].posY.ToString();
-        }
-         
-      
+        }               
     }
 
     /// <summary>
@@ -130,7 +125,6 @@ namespace project
             posY = pointWhere.Y;
                        
             bodyRectangle = new Rectangle(posX, bodyPoint.Y -  ySize, xSize, ySize);
-
         }
 
         public void Draw()
@@ -145,6 +139,7 @@ namespace project
             Exsacly.DrawRectangle(new Pen(Brushes.Blue), bodyRectangle);
             Exsacly.FillRectangle(brush, bodyRectangle);
         }
+
         /// <summary>
         /// Запускает движение прямоугольника
         /// </summary>
@@ -155,14 +150,10 @@ namespace project
         /// <param name="param">Bitmap incapsulated in form</param>
         /// <param name="panelWhereShow">та на которой и будем рисовать</param>
         public void startMoving(int xStart, int yStart, int xEnd, int yEnd, Bitmap param, Panel panelWhereShow,TextBox calledFromForm)
-        {
-            
+        {            
                 int dx, dy, s;
-
                 string buffer = "";
-
                 buffer += xStart.ToString() + " " + yStart.ToString()+" " + "\r\n" ;  
-
 
                 /* Упорядочивание координат и вычисление приращений */
                 if (xStart > xEnd)
@@ -200,7 +191,6 @@ namespace project
                         xStart = xStart + 1;
                         yStart = yStart + 1;
                       
-
                         Bitmap lBitmap = (Bitmap) param.Clone();
                         Graphics lGraphics = Graphics.FromImage(lBitmap);
 
@@ -215,7 +205,6 @@ namespace project
                         lGraphicsForm.Dispose();
 
                         buffer += xStart.ToString() + " " + yStart.ToString() + " " + "\r\n";
-
                     }
                 }
                 else if (dx > dy)
@@ -274,9 +263,7 @@ namespace project
                         buffer += xStart.ToString() + " " + yStart.ToString() + " " + "\r\n";
                     }
                 }
-
                 calledFromForm.Text = buffer;            
-
         }
     }
 
